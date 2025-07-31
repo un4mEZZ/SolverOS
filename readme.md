@@ -1,25 +1,25 @@
-##Доступные команды:
+# Доступные команды:
 info
 solve ax+b=c
 gcd dig1 dig2
 lcm dig1 dig2
 
-##Цели:
+# Цели:
 1) функция div
 2) полноценный ревью кода
 3) фиксы багов
 
 
-##Команды для запуска (yasm):
-Загрузчик
+# Команды для запуска (yasm):
+## Загрузчик
 yasm -p gas -f bin -o bootsect.tmp bootsect.asm
 dd bs=31744 skip=1 if=bootsect.tmp of=bootsect.bin
 
-Ядро
+## Ядро
 g++ -ffreestanding -m32 -o kernel.o -c kernel.cpp
 ld --oformat binary -Ttext 0x10000 -o kernel.bin --entry=kmain -m elf_i386 kernel.o
 
-Эмулятор
+## Эмулятор
 qemu -fda bootsect.bin -fdb kernel.bin
 
 ___________________
