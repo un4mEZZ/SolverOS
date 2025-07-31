@@ -723,7 +723,6 @@ void solve(unsigned char *str) {
     }
 }
 
-
 int nod(int m, int n) {
     // Проверка входных данных с помощью check_of
     if (!check_of(m, int_to_char(m)) || !check_of(n, int_to_char(n))) {
@@ -736,80 +735,6 @@ int nod(int m, int n) {
     // Алгоритм Евклида
     return n ? nod(n, m % n) : m;
 }
-
-/*
-void gcd(unsigned char *str){
-	int i = 0, j = 0;
-	unsigned char gcd1[20], gcd2[20];
-	for (int k = 0; k < 20; k++){
-		gcd1[k] = '\0';
-		gcd2[k] = '\0';
-	}
-	while (str[i*2] != ' ' && str[i*2]){	
-		gcd1[i] = str[i*2];
-		i++;
-	}
-	i++;
-	while(str[i*2]){
-		gcd2[j] = str[i*2];
-		i++;
-		j++;
-	}
-	int dig1 = 0;
-	if (*gcd1 != '\0') dig1 = char_to_int(gcd1);
-	else *gcd1 = '0';
-	int dig2 = 0;
-	if (*gcd2 != '\0') dig2 = char_to_int(gcd2);
-	else *gcd2 = '0';
-	out_word(ERR_CLR, " ");
-	bool WC = (*gcd1 == '\0' || *gcd2 == '\0' || dig1 <= 0 || dig2 <= 0);
-	bool OF = (check_of(dig1, gcd1) || check_of(dig2, gcd2));
-/*
-	if (!WC && !OF){
-		int gcd_res = nod(dig1, dig2);
-		unsigned char *chr = int_to_char(gcd_res);
-		global_pos = 0;
-		global_str++;
-		out_word(currentColour, "Result: ");
-		out_word(currentColour, (const char*)chr);
-	}
-	else {
-		if (WC) out_str(ERR_CLR, "Error: command incorrect", ++global_str);
-		if (OF) out_str(ERR_CLR, "Error: Integer overflow", ++global_str);
-	}
-
-//________________________
-	if (WC || OF) {
-        	global_pos = 0;
-        	global_str++;
-        	if (WC) {
-			out_word(currentColour, "Debug: WC true (dig1=");
-			out_word(currentColour, (const char*)int_to_char(dig1));
-			out_word(currentColour, ", dig2=");
-			out_word(currentColour, (const char*)int_to_char(dig2));
-			out_word(currentColour, ") - Invalid command\n");
-			out_str(ERR_CLR, "Error: command incorrect", ++global_str);
-            		return;
-        	}
-        	if (OF) {
-			out_word(currentColour, "Debug: OF true (dig1=");
-			out_word(currentColour, (const char*)int_to_char(dig1));
-			out_word(currentColour, ", dig2=");
-			out_word(currentColour, (const char*)int_to_char(dig2));
-			out_word(currentColour, ") - Overflow detected\n");
-			out_str(ERR_CLR, "Error: Integer overflow", ++global_str);
-			return;
-        	}
-	}
-	else {
-		int gcd_res = nod(dig1, dig2);
-		unsigned char *chr = int_to_char(gcd_res);
-		global_pos = 0;
-		global_str++;
-		out_word(currentColour, "Result: ");
-		out_word(currentColour, (const char*)chr);
-	}
-}*/
 
 bool check_string(unsigned char *str, int string_length, unsigned char *allowed, int allowed_length) {
     if (!str || string_length <= 0) return false; // Проверка на NULL или пустую строку
