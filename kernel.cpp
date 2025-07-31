@@ -500,31 +500,7 @@ bool strcmp_s(unsigned char* str1, unsigned char* str2){
    if (*str1 == *str2) return 1; 
    return 0;
 }
-/*
-bool check_of(int num, unsigned char* str_num){
-	if (*str_num == '+') str_num++;
-	unsigned char *num_str;
-	for (int i = 0; i < 11; i++) num_str[i] = '\0';
-	num_str = int_to_char(num);
-	return !(strcmp_s(str_num, num_str));
-}
-*/
-/*
-int check_of(int value, unsigned char *str) {
-    int expected = char_to_int(str);
-    // Дебаг
-    global_pos = 0;
-    global_str++;
-    out_word(currentColour, "Debug: check_of: value=");
-    out_word(currentColour, (const char*)int_to_char(value));
-    out_word(currentColour, ", expected=");
-    out_word(currentColour, (const char*)int_to_char(expected));
-    out_word(currentColour, ", result=");
-    out_word(currentColour, value == expected ? "0" : "1");
-    out_word(currentColour, "\n");
-    return value != expected; // Простая проверка на равенство
-}
-*/
+
 int check_of(int value, unsigned char *str) {
     unsigned char *int_char = int_to_char(value);
     // Дебаг
