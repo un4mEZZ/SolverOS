@@ -391,7 +391,7 @@ int strlen(unsigned char *str){
 
 void info(){
 	global_pos = 0;
-	out_str(currentColour, "Version 0.4.0 debug (solve, gcd, lcm complete)", ++global_str);
+	out_str(currentColour, "Version 1.0.0 debug", ++global_str);
 
 	out_str(currentColour, "..######...#######..##.......##.....##.########.########...#######...######.", ++global_str);
 	out_str(currentColour, ".##....##.##.....##.##.......##.....##.##.......##.....##.##.....##.##....##", ++global_str);
@@ -615,7 +615,8 @@ void solve(unsigned char *str) {
         j++;
     }
 
-// Дебаг-вывод полученных символов
+// DEBUG
+/*
     global_pos = 0;
     global_str++;
     out_word(currentColour, "Debug: Parsed a=");
@@ -625,13 +626,14 @@ void solve(unsigned char *str) {
     out_word(currentColour, ", c=");
     out_word(currentColour, (const char*)num3);
     out_word(currentColour, "\n");
-
+*/
     // 2) Длина строк
     int len1 = strlen(num1);
     int len2 = strlen(num2);
     int len3 = strlen(num3);
 
 // Дебаг-вывод len
+/*
     global_pos = 0;
     global_str++;
     out_word(currentColour, "Debug: Parsed len1=");
@@ -641,7 +643,7 @@ void solve(unsigned char *str) {
     out_word(currentColour, ", len3=");
     out_word(currentColour, (const char*)int_to_char(len3));
     out_word(currentColour, "\n");
-
+*/
     // 3) Проверка ведущих нулей
     int start1 = (num1[0] == '-' || num1[0] == '+') ? 1 : 0; // Пропускаем знак для a
     if (len1 > start1 + 1 && num1[start1] == '0') { // Ведущие нули после знака
@@ -662,7 +664,7 @@ void solve(unsigned char *str) {
         return;
     }
 
-    // 3) Преобразование строк в числа
+    // 4) Преобразование строк в числа
     int dig1 = (*num1) ? (validate_num(num1) ? char_to_int(num1) : 0) : 1;
     if (dig1 == 1) num1[0] = '1';
     if (dig1 == -1) { num1[0] = '-'; num1[1] = '1'; }
@@ -675,6 +677,7 @@ void solve(unsigned char *str) {
     int dig3 = (*num3) ? (validate_num(num3) ? char_to_int(num3) : 0) : 0;
 
 //debug digits
+/*
     global_pos = 0;
     global_str++;
     out_word(currentColour, "Debug: Parsed dig1=");
@@ -684,8 +687,8 @@ void solve(unsigned char *str) {
     out_word(currentColour, ", dig3=");
     out_word(currentColour, (const char*)int_to_char(dig3));
     out_word(currentColour, "\n");
-
-    // 4) Проверка переполнения
+*/
+    // 5) Проверка переполнения
     if (!check_of_signed(dig1, num1)) {
         out_word(ERR_CLR, " ");
         out_str(ERR_CLR, "Error: Integer overflow (dig1)", ++global_str);
@@ -702,7 +705,7 @@ void solve(unsigned char *str) {
         return;
     }
 
-    // 5) Вычисление результата: x = (c - b) / a
+    // 6) Вычисление результата: x = (c - b) / a
     global_pos = 0;
     global_str++;
     out_word(currentColour, "Result: x=");
@@ -754,7 +757,7 @@ void gcd(unsigned char *str) {
         i++;
         j++;
     }
-
+/*
 // Дебаг-вывод полученных символов
     global_pos = 0;
     global_str++;
@@ -763,13 +766,14 @@ void gcd(unsigned char *str) {
     out_word(currentColour, ", gcd2=");
     out_word(currentColour, (const char*)gcd2);
     out_word(currentColour, "\n");
-
+*/
 
     // 2) Проверка на лишние символы
     int len1 = strlen(gcd1);
     int len2 = strlen(gcd2);
 
 // Дебаг-вывод len
+/*
     global_pos = 0;
     global_str++;
     out_word(currentColour, "Debug: Parsed len1=");
@@ -777,7 +781,7 @@ void gcd(unsigned char *str) {
     out_word(currentColour, ", len2=");
     out_word(currentColour, (const char*)int_to_char(len2));
     out_word(currentColour, "\n");
-
+*/
     unsigned char allowed_gcd[] = { '0', '1', '2', '3', '4', '5', '6', '7', '8', '9' };
     int allowed_gcd_length = 10;
 
@@ -858,7 +862,6 @@ int nok(int m, int n) {
 	return -1;
     }
 
-    
     // Вычисление НОК
     return (m / gcd) * n;
 }
@@ -880,6 +883,7 @@ void lcm(unsigned char *str) {
     }
 
 // Дебаг-вывод полученных символов
+/*
     global_pos = 0;
     global_str++;
     out_word(currentColour, "Debug: Parsed lcm1=");
@@ -887,12 +891,14 @@ void lcm(unsigned char *str) {
     out_word(currentColour, ", lcm2=");
     out_word(currentColour, (const char*)lcm2);
     out_word(currentColour, "\n");
+*/
 
     // 2) Проверка на лишние символы
     int len1 = strlen(lcm1);
     int len2 = strlen(lcm2);
 
 // Дебаг-вывод len
+/*
     global_pos = 0;
     global_str++;
     out_word(currentColour, "Debug: Parsed len1=");
@@ -900,7 +906,7 @@ void lcm(unsigned char *str) {
     out_word(currentColour, ", len2=");
     out_word(currentColour, (const char*)int_to_char(len2));
     out_word(currentColour, "\n");
-
+*/
     unsigned char allowed_lcm[] = { '0', '1', '2', '3', '4', '5', '6', '7', '8', '9' };
     int allowed_lcm_length = 10;
 
@@ -957,54 +963,149 @@ void lcm(unsigned char *str) {
     out_word(currentColour, (const char*)chr);
 }
 
-void div(unsigned char *str){
-	int i = 0, j = 0;
-	unsigned char div1[20], div2[20];
-	for (int k = 0; k < 20; k++){
-		div1[k] = '\0';
-		div2[k] = '\0';
-	}
-	while (str[i*2] != ' ' && str[i*2]){	
-		div1[i] = str[i*2];
-		i++;
-	}
-	i++;
-	while(str[i*2]){
-		div2[j] = str[i*2];
-		i++;
-		j++;
-	}
-	bool WC = (*div1 == '\0' || *div2 == '\0');
-	int dig1 = 0;
-	if (*div1 != '\0') dig1 = char_to_int(div1);
-	else *div1 = '0';
-	int dig2 = 0;
-	if (*div2 != '\0') dig2 = char_to_int(div2);
-	else *div2 = '0';
-	out_word(ERR_CLR, " ");
-	bool ZD = (dig2 == 0 && !WC);
-	bool OF = (check_of(dig1, div1) || check_of(dig2, div2));
-	if (!WC && !ZD && !OF){
-		float div_resfl = (float)dig1 / (float)dig2;
-		unsigned char *chr1 = int_to_char((int)div_resfl);
-		global_pos = 0;
-		global_str++;
-		out_word(currentColour, "Result: ");
-		if (div_resfl < 0 && div_resfl > -1) out_word(currentColour, "-");
-		out_word(currentColour, (const char*)chr1);
-		out_word(currentColour, ".");
-		div_resfl = (div_resfl - (int)div_resfl) * 1000000;
-		if (div_resfl < 0) div_resfl = div_resfl * (-1);
-		if ((int)div_resfl % 10 >= 5) div_resfl = div_resfl + 10;
-		div_resfl = div_resfl / 10;
-		unsigned char *chr2 = int_to_char((int)div_resfl);
-		for (int k = 5; k > strlen((unsigned char *)chr2); k--)
-			out_word(currentColour, "0");
-			out_word(currentColour, (const char*)chr2);
-	}
-	else {
-		if (WC) out_str(ERR_CLR, "Error: command incorrect", ++global_str);
-		if (ZD) out_str(ERR_CLR, "Error: Division by zero", ++global_str);
-		if (OF) out_str(ERR_CLR, "Error: Integer overflow", ++global_str);
-	}
+// Вспомогательная функция для валидации всей строки
+int validate_str_div(unsigned char *s) {
+    for (int k = 0; s[k*2]; k++) {
+        unsigned char c = s[k*2];
+        if (!(c >= '0' && c <= '9') && c != '-' && c != ' ') return 0;
+    }
+    return 1;
 }
+
+void div(unsigned char *str){
+    int i = 0, j = 0;
+    unsigned char div1[35] = {0}, div2[35] = {0};
+
+    // 0) Проверка исходной строки на допустимые символы
+    if (!validate_str_div(str)) {
+        out_word(ERR_CLR, " ");
+        out_str(ERR_CLR, "Error: command incorrect ( 0) )", ++global_str);
+        return;
+    }
+
+    // 1) Парсим строку
+    while (str[i*2] != ' ' && str[i*2]) {	
+        div1[i] = str[i*2];
+        i++;
+    }
+    i++;
+    while (str[i*2]) {
+        div2[j] = str[i*2];
+        i++;
+        j++;
+    }
+
+    // Дебаг-вывод полученных символов
+    global_pos = 0;
+    global_str++;
+    out_word(currentColour, "Debug: Parsed div1=");
+    out_word(currentColour, (const char*)div1);
+    out_word(currentColour, ", div2=");
+    out_word(currentColour, (const char*)div2);
+    out_word(currentColour, "\n");
+
+    // 2) Проверка на лишние символы
+    int len1 = strlen(div1);
+    int len2 = strlen(div2);
+
+    // Дебаг-вывод len
+    global_pos = 0;
+    global_str++;
+    out_word(currentColour, "Debug: Parsed len1=");
+    out_word(currentColour, (const char*)int_to_char(len1));
+    out_word(currentColour, ", len2=");
+    out_word(currentColour, (const char*)int_to_char(len2));
+    out_word(currentColour, "\n");
+
+    unsigned char allowed_div[] = { '0', '1', '2', '3', '4', '5', '6', '7', '8', '9', '-' };
+    int allowed_div_length = 11;
+
+// check_string also checks for <0
+    if (!check_string(div1, len1, allowed_div, allowed_div_length) || !check_string(div2, len2, allowed_div, allowed_div_length)) {
+        out_word(ERR_CLR, " ");
+        out_str(ERR_CLR, "Error: command incorrect (check_string)", ++global_str);
+        return;
+    }
+    // 3) Проверка ведущих нулей
+    int start1 = (div1[0] == '-' || div1[0] == '+') ? 1 : 0; // Пропускаем знак для div1
+    if (len1 > start1 + 1 && div1[start1] == '0') { // Ведущие нули после знака
+        out_word(ERR_CLR, " ");
+        out_str(ERR_CLR, "Error: command incorrect (vedush 0-1)", ++global_str);
+        return;
+    }
+    int start2 = (div2[0] == '-' || div2[0] == '+') ? 1 : 0; // Пропускаем знак для div2
+    if (len2 > start2 + 1 && div2[start2] == '0') { // Ведущие нули после знака
+        out_word(ERR_CLR, " ");
+        out_str(ERR_CLR, "Error: command incorrect (vedush 0-2)", ++global_str);
+        return;
+    }
+
+    // 4) Преобразование строк в числа
+    int dig1 = (*div1) ? (validate_num(div1) ? char_to_int(div1) : 0) : 1;
+    if (dig1 == 1) div1[0] = '1';
+    if (dig1 == -1) { div1[0] = '-'; div1[1] = '1'; }
+
+    int dig2 = (*div2) ? (validate_num(div2) ? char_to_int(div2) : 0) : 0;
+    if (dig2 == 0) {
+	out_word(ERR_CLR, " ");
+        out_str(ERR_CLR, "Error: Division by zero", ++global_str);
+	return;
+    }
+
+//debug digits
+    global_pos = 0;
+    global_str++;
+    out_word(currentColour, "Debug: Parsed dig1=");
+    out_word(currentColour, (const char*)int_to_char(dig1));
+    out_word(currentColour, ", dig2=");
+    out_word(currentColour, (const char*)int_to_char(dig2));
+    out_word(currentColour, "\n");
+
+    // 5) Проверка переполнения
+    if (!check_of_signed(dig1, div1)) {
+        out_word(ERR_CLR, " ");
+        out_str(ERR_CLR, "Error: Integer overflow (dig1)", ++global_str);
+        return;
+    }
+
+    if (!check_of_signed(dig2, div2)) {
+        out_word(ERR_CLR, " ");
+        out_str(ERR_CLR, "Error: Integer overflow (dig2)", ++global_str);
+        return;
+    }
+
+    // 6) Вычисление результата: x = a/b
+    global_pos = 0;
+    global_str++;
+    out_word(currentColour, "Result: x=");
+
+    float resfl = (float)dig1 / (float)dig2;
+    bool isNegative = (dig1 * dig2 < 0); // Определяем знак результата
+
+    // Целая часть
+    int whole = (int)resfl;
+    out_word(currentColour, (const char*)int_to_char(whole));
+
+    // Дробная часть с пятью знаками
+    out_word(currentColour, ".");
+    float absFraction = (resfl < 0 ? -resfl : resfl) - (float)(whole < 0 ? -whole : whole); // Абсолютная дробная часть
+    absFraction *= 100000; // Сдвигаем на 5 знаков
+    int fractional = (int)(absFraction + 0.5); // Округление до ближайшего целого
+
+    // Выводим пять знаков, добавляя ведущие нули
+    unsigned char *frac = int_to_char(fractional);
+    for (int k = 5; k > strlen(frac); k--) out_word(currentColour, "0");
+    out_word(currentColour, (const char*)frac);
+
+    // Корректируем вывод, если результат отрицательный и целая часть нулевая
+    if (isNegative && whole == 0 && fractional > 0) {
+        global_pos = 0;
+        global_str--;
+        out_word(currentColour, "-");
+        out_word(currentColour, "0");
+        out_word(currentColour, ".");
+        for (int k = 5; k > strlen(frac); k--) out_word(currentColour, "0");
+        out_word(currentColour, (const char*)frac);
+    }
+}
+
