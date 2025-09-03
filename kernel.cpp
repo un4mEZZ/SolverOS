@@ -705,7 +705,7 @@ void solve(unsigned char *str) {
         return;
     }
 
-// 6) Вычисление результата: x = (c - b) / a
+    // 6) Вычисление результата: x = (c - b) / a
     global_pos = 0;
     global_str++;
     out_word(currentColour, "Result: x=");
@@ -713,30 +713,38 @@ void solve(unsigned char *str) {
     float resfl = ((float)dig3 - (float)dig2) / (float)dig1;
     bool isNegative = (dig3 - dig2) * dig1 < 0; // Определяем знак результата
 
-    // Целая часть
-    int whole = (int)resfl;
-    out_word(currentColour, (const char*)int_to_char(whole));
+    // Проверка на целое число с допуском
+    float fractionalPart = resfl - (int)resfl;
+    bool isInteger = (fractionalPart < 1e-6 && fractionalPart > -1e-6); // Допуск 0.000001
 
-    // Дробная часть с пятью знаками
-    out_word(currentColour, ".");
-    float absFraction = (resfl < 0 ? -resfl : resfl) - (float)(whole < 0 ? -whole : whole); // Абсолютная дробная часть
-    absFraction *= 100000; // Сдвигаем на 5 знаков
-    int fractional = (int)(absFraction + 0.5); // Округление до ближайшего целого
+    if (isInteger) {
+        out_word(currentColour, (const char*)int_to_char((int)resfl));
+    } else {
+        // Целая часть
+        int whole = (int)resfl;
+        out_word(currentColour, (const char*)int_to_char(whole));
 
-    // Выводим пять знаков, добавляя ведущие нули
-    unsigned char *frac = int_to_char(fractional);
-    for (int k = 5; k > strlen(frac); k--) out_word(currentColour, "0");
-    out_word(currentColour, (const char*)frac);
-
-    // Корректируем вывод, если результат отрицательный и целая часть нулевая
-    if (isNegative && whole == 0 && fractional > 0) {
-        global_pos = 0;
-        global_str--;
-        out_word(currentColour, "-");
-        out_word(currentColour, "0");
+        // Дробная часть с пятью знаками
         out_word(currentColour, ".");
+        float absFraction = (resfl < 0 ? -resfl : resfl) - (float)(whole < 0 ? -whole : whole); // Абсолютная дробная часть
+        absFraction *= 100000; // Сдвигаем на 5 знаков
+        int fractional = (int)(absFraction + 0.5); // Округление до ближайшего целого
+
+        // Выводим пять знаков, добавляя ведущие нули
+        unsigned char *frac = int_to_char(fractional);
         for (int k = 5; k > strlen(frac); k--) out_word(currentColour, "0");
         out_word(currentColour, (const char*)frac);
+
+        // Корректируем вывод, если результат отрицательный и целая часть нулевая
+        if (isNegative && whole == 0 && fractional > 0) {
+            global_pos = 0;
+            global_str--;
+            out_word(currentColour, "-");
+            out_word(currentColour, "0");
+            out_word(currentColour, ".");
+            for (int k = 5; k > strlen(frac); k--) out_word(currentColour, "0");
+            out_word(currentColour, (const char*)frac);
+        }
     }
 }
 
