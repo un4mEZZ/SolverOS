@@ -1119,3 +1119,4 @@ void div(unsigned char *str){
         out_word(currentColour, (const char*)frac);
     }
 }
+
