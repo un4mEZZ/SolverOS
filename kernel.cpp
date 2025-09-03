@@ -705,25 +705,36 @@ void solve(unsigned char *str) {
         return;
     }
 
-    // 6) Вычисление результата: x = (c - b) / a
+// 6) Вычисление результата: x = (c - b) / a
     global_pos = 0;
     global_str++;
     out_word(currentColour, "Result: x=");
-    float resfl = ((float)dig3 - (float)dig2) / (float)dig1;
 
-    // Проверка на целое решение
-    int res = (int)resfl;
-    if (dig1 * res + dig2 == dig3) {
-        out_word(currentColour, (const char*)int_to_char(res));
-    } else {
-        // Дробный результат с 5 знаками после запятой
-        if (resfl < 0 && resfl > -1) out_word(currentColour, "-");
-        out_word(currentColour, (const char*)int_to_char((int)resfl));
+    float resfl = ((float)dig3 - (float)dig2) / (float)dig1;
+    bool isNegative = (dig3 - dig2) * dig1 < 0; // Определяем знак результата
+
+    // Целая часть
+    int whole = (int)resfl;
+    out_word(currentColour, (const char*)int_to_char(whole));
+
+    // Дробная часть с пятью знаками
+    out_word(currentColour, ".");
+    float absFraction = (resfl < 0 ? -resfl : resfl) - (float)(whole < 0 ? -whole : whole); // Абсолютная дробная часть
+    absFraction *= 100000; // Сдвигаем на 5 знаков
+    int fractional = (int)(absFraction + 0.5); // Округление до ближайшего целого
+
+    // Выводим пять знаков, добавляя ведущие нули
+    unsigned char *frac = int_to_char(fractional);
+    for (int k = 5; k > strlen(frac); k--) out_word(currentColour, "0");
+    out_word(currentColour, (const char*)frac);
+
+    // Корректируем вывод, если результат отрицательный и целая часть нулевая
+    if (isNegative && whole == 0 && fractional > 0) {
+        global_pos = 0;
+        global_str--;
+        out_word(currentColour, "-");
+        out_word(currentColour, "0");
         out_word(currentColour, ".");
-        resfl = (resfl < 0 ? -resfl : resfl) - (int)resfl;
-        resfl *= 100000; // 5 знаков
-        if ((int)resfl % 10 >= 5) resfl += 10; // Округление
-        unsigned char *frac = int_to_char((int)resfl);
         for (int k = 5; k > strlen(frac); k--) out_word(currentColour, "0");
         out_word(currentColour, (const char*)frac);
     }
@@ -1108,4 +1119,3 @@ void div(unsigned char *str){
         out_word(currentColour, (const char*)frac);
     }
 }
-
