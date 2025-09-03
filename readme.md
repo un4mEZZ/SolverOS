@@ -5,6 +5,7 @@ solve ax+b=c
 gcd dig1 dig2
 lcm dig1 dig2
 div dig1 dig2
+shutdown
 ```
 # Цели:
 1) ~~функция div~~ (v1.0.0)
