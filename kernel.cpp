@@ -391,7 +391,7 @@ int strlen(unsigned char *str){
 
 void info(){
 	global_pos = 0;
-	out_str(currentColour, "Version 1.0.0 debug", ++global_str);
+	out_str(currentColour, "Version 1.0.5 debug (fixed solve result OF)", ++global_str);
 
 	out_str(currentColour, "..######...#######..##.......##.....##.########.########...#######...######.", ++global_str);
 	out_str(currentColour, ".##....##.##.....##.##.......##.....##.##.......##.....##.##.....##.##....##", ++global_str);
@@ -418,23 +418,23 @@ void info(){
 
 int char_to_int(unsigned char *str){
 	int res = 0;
-	int sz = strlen(str);
+	int size = strlen(str);
 	if (str[0]=='-'){
-		if (sz == 1) res = 1;
-		for (int i = 1; i < sz; i ++){
+		if (size == 1) res = 1;
+		for (int i = 1; i < size; i++){
 			res = res * 10 + (str[i] - '0');
 		}
 		res = 0 - res;
 	}
 	else if (str[0]=='+'){
-		if (sz == 1) res = 1;
-		for (int i = 1; i < sz; i ++){
+		if (size == 1) res = 1;
+		for (int i = 1; i < size; i++){
 			res = res * 10 + (str[i] - '0');
 		}
 	}
 	else{
-		if (sz == 0) res = 1;
-		for (int i = 0; i < sz; i ++){
+		if (size == 0) res = 1;
+		for (int i = 0; i < size; i++){
 			res = res * 10 + (str[i] - '0');
 		}
 	}
@@ -706,8 +706,26 @@ void solve(unsigned char *str) {
     }
 
     // 6) Вычисление результата: x = (c - b) / a
+
     global_pos = 0;
     global_str++;
+
+    // Проверка переполнения результата
+    int ax_half = (dig3 / 2) - (dig2 / 2);
+    int sign = 0;   //0=+, 1=-
+    if (ax_half < 0) {
+        sign = 1; 
+        ax_half--;
+    }
+    out_word(currentColour, "ax_half=");
+    if (sign == 0) out_word(currentColour, (const char*)int_to_char(ax_half));
+    else out_word(currentColour, (const char*)int_to_char(ax_half));
+    if (ax_half > (MAX_INT/2) || ax_half < -1073741824) {
+        out_word(ERR_CLR, " ");
+        out_str(ERR_CLR, "Error: Integer overflow", ++global_str);
+        return;
+    }
+    
     out_word(currentColour, "Result: x=");
 
     float resfl = ((float)dig3 - (float)dig2) / (float)dig1;
