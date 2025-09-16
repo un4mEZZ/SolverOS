@@ -19,7 +19,7 @@ struct idt_entry
 {
 	unsigned short base_lo;		// Младшие биты адреса обработчика
 	unsigned short segm_sel;	// Селектор сегмента кода
-	unsigned char always0;		// Этот байт всегда 0
+	unsigned char always0;
 	unsigned char flags;		// Флаги
 	unsigned short base_hi;
 } __attribute__((packed));		// Выравнивание запрещено
@@ -118,8 +118,14 @@ char shift_char[] = {
 	'a', 'b', 'c', 'd', 'e', 'f', 'g', 'h', 'i', 'j', 'k', 'l', 'm', 'n', 'o', 'p', 'q', 'r', 's', 't', 'u', 'v', 'w', 'x', 'y', 'z', '=', '8',
 	'A', 'B', 'C', 'D', 'E', 'F', 'G', 'H', 'I', 'J', 'K', 'L', 'M', 'N', 'O', 'P', 'Q', 'R', 'S', 'T', 'U', 'V', 'W', 'X', 'Y', 'Z', '+', '*' };
 
-char currentColour = 0x08;
-char colours[] = { 0x07, 0x0f, 0x0e, 0x0b, 0x0d, 0x0a };
+char currentColour = 0x07;
+char colours[] = {  0x07,   // gray
+                    0x0f,   // white
+                    0x0e,   // yellow
+                    0x0b,   // cian (aqua)
+                    0x0d,   // magenta (light purple)
+                    0x0a    // green
+                    };
 
 void clean(){	
 	unsigned char *video_buf = (unsigned char*) VIDEO_BUF_PTR;
@@ -320,7 +326,6 @@ void on_key(unsigned char scan_code){
 	else if (global_pos < 42 && scan_codes[scan_code] != 0) symbol(scan_code);
 }
 
-
 void backspace(){
 	if (global_pos > 2){
 		unsigned char* video_buf = (unsigned char*) VIDEO_BUF_PTR;
@@ -336,7 +341,6 @@ void enter(){
 	global_pos = 2;
 	cursor_move_to(global_str, global_pos);
 }
-
 
 void symbol(unsigned char scan_code){
 	char c = scan_codes[(unsigned int)scan_code];
@@ -358,7 +362,6 @@ unsigned char* lower(unsigned char* str){
 			if (str[i] == shift_char[j]) temp[i] = shift_char[j % 28];
 	return temp;
 }
-
 
 void commands(){
 	unsigned char* video_buf = (unsigned char*) VIDEO_BUF_PTR;
@@ -391,7 +394,7 @@ int strlen(unsigned char *str){
 
 void info(){
 	global_pos = 0;
-	out_str(currentColour, "Version 1.0.5 debug (fixed solve result OF)", ++global_str);
+	out_str(currentColour, "Version 1.1.0 debug (fixed solve result OF; '-0')", ++global_str);
 
 	out_str(currentColour, "..######...#######..##.......##.....##.########.########...#######...######.", ++global_str);
 	out_str(currentColour, ".##....##.##.....##.##.......##.....##.##.......##.....##.##.....##.##....##", ++global_str);
@@ -502,6 +505,12 @@ bool strcmp_s(unsigned char* str1, unsigned char* str2){
 }
 
 int check_of(int value, unsigned char *str) {
+
+    // Проверяем, является ли строка "-0"
+    if (strcmp_s(str, (unsigned char*)"-0")) {
+        return (value == 0); // "-0" эквивалентно value == 0
+    }
+
     unsigned char *int_char = int_to_char(value);
     // Дебаг
     global_pos = 0;
@@ -512,16 +521,22 @@ int check_of(int value, unsigned char *str) {
     out_word(currentColour, (const char*)str);
     out_word(currentColour, ", result=");
     bool comp = strcmp_s(int_char, str);
-    out_word(currentColour, strcmp_s(int_char, str) ? "0" : "1");
+    out_word(currentColour, comp ? "0" : "1");
     out_word(currentColour, "\n");
     return comp;
 }
 
 int check_of_signed(int value, unsigned char *str) { //5, '+5'
+
+    // Проверяем, является ли строка "-0" или "+0"
+    if (strcmp_s(str, (unsigned char*)"-0") || strcmp_s(str, (unsigned char*)"+0")) {
+        return (value == 0);    // "-0" и "+0" эквивалентны value == 0
+    }
+
     unsigned char *int_char = int_to_char(value); //'5'
     if (*str == '+') {
-	int len = strlen(str); //len=2
-	str = str+1;
+	    int len = strlen(str); //len=2
+	    str = str+1;
     }
 
     // Дебаг
@@ -533,7 +548,7 @@ int check_of_signed(int value, unsigned char *str) { //5, '+5'
     out_word(currentColour, (const char*)str);
     out_word(currentColour, ", result=");
     bool comp = strcmp_s(int_char, str);
-    out_word(currentColour, strcmp_s(int_char, str) ? "0" : "1");
+    out_word(currentColour, comp ? "0" : "1");
     out_word(currentColour, "\n");
     return comp;
 }
@@ -627,6 +642,7 @@ void solve(unsigned char *str) {
     out_word(currentColour, (const char*)num3);
     out_word(currentColour, "\n");
 */
+
     // 2) Длина строк
     int len1 = strlen(num1);
     int len2 = strlen(num2);
@@ -644,6 +660,7 @@ void solve(unsigned char *str) {
     out_word(currentColour, (const char*)int_to_char(len3));
     out_word(currentColour, "\n");
 */
+
     // 3) Проверка ведущих нулей
     int start1 = (num1[0] == '-' || num1[0] == '+') ? 1 : 0; // Пропускаем знак для a
     if (len1 > start1 + 1 && num1[start1] == '0') { // Ведущие нули после знака
@@ -669,9 +686,9 @@ void solve(unsigned char *str) {
     if (dig1 == 1) num1[0] = '1';
     if (dig1 == -1) { num1[0] = '-'; num1[1] = '1'; }
     if (dig1 == 0) {
-	out_word(ERR_CLR, " ");
+	    out_word(ERR_CLR, " ");
         out_str(ERR_CLR, "Error: Division by zero", ++global_str);
-	return;
+	    return;
     }
     int dig2 = (*num2) ? (validate_num(num2) ? char_to_int(num2) : 0) : 0;
     int dig3 = (*num3) ? (validate_num(num3) ? char_to_int(num3) : 0) : 0;
@@ -706,28 +723,74 @@ void solve(unsigned char *str) {
     }
 
     // 6) Вычисление результата: x = (c - b) / a
-
     global_pos = 0;
     global_str++;
 
     // Проверка переполнения результата
     int ax_half = (dig3 / 2) - (dig2 / 2);
-    int sign = 0;   //0=+, 1=-
+    int sign = 0;                           //0=+, 1=-
     if (ax_half < 0) {
         sign = 1; 
         ax_half--;
     }
-    out_word(currentColour, "ax_half=");
+    out_word(currentColour, "Debug: ax_half=");
     if (sign == 0) out_word(currentColour, (const char*)int_to_char(ax_half));
     else out_word(currentColour, (const char*)int_to_char(ax_half));
-    if (ax_half > (MAX_INT/2) || ax_half < -1073741824) {
+    if ((dig2<0) && (ax_half >= (MAX_INT/2)) || ax_half < -1073741824) {
         out_word(ERR_CLR, " ");
         out_str(ERR_CLR, "Error: Integer overflow", ++global_str);
         return;
     }
-    
+
+    global_pos = 0;
+    global_str++;
     out_word(currentColour, "Result: x=");
 
+    // Сначала вычисляем num с проверкой переполнения
+    // Предполагаем, что после проверки ax_half num безопасно вычисляется как dig3 - dig2
+    int num = dig3 - dig2;  // Это выполняется только если проверка переполнения пройдена
+
+    // Проверяем, является ли результат целым числом, используя целочисленную арифметику (без float)
+    bool isInteger = (dig1 != 0 && (num % dig1 == 0));
+
+    if (isInteger) {
+        // Целочисленный случай
+        int whole = num / dig1;
+        out_word(currentColour, (const char*)int_to_char(whole));
+    } else {
+        // Дробный случай
+        float resfl = ((float)dig3 - (float)dig2) / (float)dig1;
+        bool isNegative = (resfl < 0);  // Изменено: используем resfl для знака, чтобы избежать переполнения в старом выражении
+        float fractionalPart = resfl - (int)resfl;
+
+        // Целая часть
+        int whole = (int)resfl;
+        out_word(currentColour, (const char*)int_to_char(whole));
+
+        // Дробная часть с пятью знаками
+        out_word(currentColour, ".");
+        float absFraction = (resfl < 0 ? -resfl : resfl) - (float)(whole < 0 ? -whole : whole); // Абсолютная дробная часть
+        absFraction *= 100000;                                                                  // Сдвигаем на 5 знаков
+        int fractional = (int)(absFraction + 0.5);                                              // Округление до ближайшего целого
+
+        // Выводим пять знаков, добавляя ведущие нули
+        unsigned char *frac = int_to_char(fractional);
+        for (int k = 5; k > strlen(frac); k--) out_word(currentColour, "0");
+        out_word(currentColour, (const char*)frac);
+
+        // Корректируем вывод, если результат отрицательный и целая часть нулевая
+        if (isNegative && whole == 0 && fractional > 0) {
+            global_pos = 0;
+            global_str--;
+            out_word(currentColour, "-");
+            out_word(currentColour, "0");
+            out_word(currentColour, ".");
+            for (int k = 5; k > strlen(frac); k--) out_word(currentColour, "0");
+            out_word(currentColour, (const char*)frac);
+        }
+    }
+}
+/*
     float resfl = ((float)dig3 - (float)dig2) / (float)dig1;
     bool isNegative = (dig3 - dig2) * dig1 < 0; // Определяем знак результата
 
@@ -765,6 +828,7 @@ void solve(unsigned char *str) {
         }
     }
 }
+*/
 
 int nod(int m, int n) {
     // Проверка входных данных с помощью check_of
@@ -1083,11 +1147,30 @@ void div(unsigned char *str){
     if (dig1 == -1) { div1[0] = '-'; div1[1] = '1'; }
 
     int dig2 = (*div2) ? (validate_num(div2) ? char_to_int(div2) : 0) : 0;
+    
     if (dig2 == 0) {
-	out_word(ERR_CLR, " ");
+	    out_word(ERR_CLR, " ");
         out_str(ERR_CLR, "Error: Division by zero", ++global_str);
-	return;
+	    return;
     }
+    
+
+    /*
+    if (dig2 == 0) {
+        out_word(ERR_CLR, " ");
+        out_str(ERR_CLR, "Error: Division by zero", ++global_str);
+        return;
+    }
+    int q = dig1 / dig2;
+    int r = dig1 % dig2;
+    out_word(currentColour, "Quotient: ");
+    out_word(currentColour, (const char*)int_to_char(q));
+    global_pos = 0;
+    global_str++;
+    out_word(currentColour, "Remainder: ");
+    out_word(currentColour, (const char*)int_to_char(r));
+    }
+    */
 
 //debug digits
     global_pos = 0;
@@ -1114,9 +1197,10 @@ void div(unsigned char *str){
     // 6) Вычисление результата: x = a/b
     global_pos = 0;
     global_str++;
-    out_word(currentColour, "Result: x=");
+    out_word(currentColour, "Result: ");
 
-    float resfl = (float)dig1 / (float)dig2;
+    //float resfl = (float)dig1 / (float)dig2;
+    double resfl = (double)dig1 / (double)dig2;
     bool isNegative = (dig1 * dig2 < 0); // Определяем знак результата
 
     // Целая часть
@@ -1125,7 +1209,8 @@ void div(unsigned char *str){
 
     // Дробная часть с пятью знаками
     out_word(currentColour, ".");
-    float absFraction = (resfl < 0 ? -resfl : resfl) - (float)(whole < 0 ? -whole : whole); // Абсолютная дробная часть
+    double absFraction = (resfl < 0 ? -resfl : resfl) - (double)(whole < 0 ? -whole : whole); // Абсолютная дробная часть
+    //float absFraction = (resfl < 0 ? -resfl : resfl) - (float)(whole < 0 ? -whole : whole); // Абсолютная дробная часть
     absFraction *= 100000; // Сдвигаем на 5 знаков
     int fractional = (int)(absFraction + 0.5); // Округление до ближайшего целого
 
